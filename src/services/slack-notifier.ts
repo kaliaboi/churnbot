@@ -12,19 +12,35 @@ export class SlackNotifier {
     try {
       await this.client.chat.postMessage({
         channel: config.slack.channelId,
-        text: "📊 *Customer Feedback Summary* 📊",
         blocks: [
+          {
+            type: "header",
+            text: {
+              type: "plain_text",
+              text: "📊 Customer Feedback Summary 📊",
+              emoji: true,
+            },
+          },
+          {
+            type: "divider",
+          },
           {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: summary,
+              text: summary
+                .replace(/•/g, "•")
+                .replace(/\n/g, "\n")
+                .split("\n")
+                .map((line) => line.trim())
+                .join("\n"),
             },
           },
         ],
       });
     } catch (error) {
       console.error("Slack notification failed:", error);
+      throw error;
     }
   }
 }
