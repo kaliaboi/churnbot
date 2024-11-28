@@ -11,27 +11,23 @@ export async function aggregateFeedback() {
         "created_at",
         new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
       )
-      .eq("payload->event", "session")
-      .or(
-        "payload->data->feedback.neq.null,payload->data->surveyResponse.neq.null"
-      )
+      .eq("event_type", "session")
+      .not("payload->data->session->feedback", "is", null)
       .limit(100);
 
     if (error) throw error;
 
     // Extract feedback texts
     const feedbackTexts = events
-      .map(
-        (row) =>
-          row.payload.data.session?.feedback ||
-          row.payload.data.session?.surveyResponse
-      )
+      ?.map((row) => row.payload.data.session?.feedback)
       .filter(Boolean);
 
-    if (feedbackTexts.length > 0) {
+    if (feedbackTexts && feedbackTexts.length > 0) {
       const summary = await summarizeFeedback(feedbackTexts);
       const slackNotifier = new SlackNotifier();
       await slackNotifier.sendFeedbackSummary(summary);
+    } else {
+      console.log("No feedback found for the period");
     }
   } catch (error) {
     console.error("Feedback aggregation failed:", error);
