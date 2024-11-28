@@ -1,30 +1,19 @@
-import { Pool } from "pg";
-import { config } from "./config";
+import { createClient } from "@supabase/supabase-js";
 
-export const pool = new Pool({
-  connectionString: config.database.connectionString,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+export const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+);
 
 export async function saveWebhookEvent(event: any) {
-  console.log("Saving webhook event:", event);
-  const client = await pool.connect();
-  try {
-    const query = `
-      INSERT INTO webhook_events 
-      (id, event_type, customer_id, payload, created_at) 
-      VALUES ($1, $2, $3, $4, NOW())
-    `;
-    const values = [
-      event.id,
-      event.event,
-      event.data?.customer?.id,
-      JSON.stringify(event),
-    ];
-    await client.query(query, values);
-  } finally {
-    client.release();
-  }
+  const { error } = await supabase.from("webhook_events").insert([
+    {
+      id: event.id,
+      event_type: event.event,
+      customer_id: event.data?.customer?.id,
+      payload: event,
+    },
+  ]);
+
+  if (error) throw error;
 }

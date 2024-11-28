@@ -1,26 +1,26 @@
-import { pool } from "../db";
+import { supabase } from "../db";
 import { summarizeFeedback } from "../services/feedback-summarizer";
 import { SlackNotifier } from "../services/slack-notifier";
 
 export async function aggregateFeedback() {
-  const client = await pool.connect();
   try {
-    // Fetch unprocessed feedback from last 24 hours
-    const query = `
-      SELECT payload 
-      FROM webhook_events 
-      WHERE 
-        created_at > NOW() - INTERVAL '24 hours' 
-        AND payload->>'event' = 'session'
-        AND (payload->'data'->>'feedback' IS NOT NULL 
-             OR payload->'data'->>'surveyResponse' IS NOT NULL)
-      LIMIT 50
-    `;
+    const { data: events, error } = await supabase
+      .from("webhook_events")
+      .select("payload")
+      .gte(
+        "created_at",
+        new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+      )
+      .eq("payload->event", "session")
+      .or(
+        "payload->data->feedback.neq.null,payload->data->surveyResponse.neq.null"
+      )
+      .limit(50);
 
-    const result = await client.query(query);
+    if (error) throw error;
 
     // Extract feedback texts
-    const feedbackTexts = result.rows
+    const feedbackTexts = events
       .map(
         (row) =>
           row.payload.data.session?.feedback ||
@@ -30,13 +30,10 @@ export async function aggregateFeedback() {
 
     if (feedbackTexts.length > 0) {
       const summary = await summarizeFeedback(feedbackTexts);
-
       const slackNotifier = new SlackNotifier();
       await slackNotifier.sendFeedbackSummary(summary);
     }
   } catch (error) {
     console.error("Feedback aggregation failed:", error);
-  } finally {
-    client.release();
   }
 }
