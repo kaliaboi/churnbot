@@ -3,7 +3,7 @@
   "crons": [
     {
       "path": "/api/summarize-feedback",
-      "schedule": "0 9 * * SUN"
+      "schedule": "0 9 * * 0"
     }
   ],
   "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
