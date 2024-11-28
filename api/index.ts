@@ -1,6 +1,9 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { v4 as uuidv4 } from "uuid";
+import { aggregateFeedback } from "../src/jobs/feedback-aggregator";
+import { verifyWebhookSignature } from "../src/services/webhook-verifier";
+import { saveWebhookEvent } from "../src/db";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -47,17 +50,14 @@ app.post("/api/webhooks/churnkey", async (req, res) => {
 
 // Temporary endpoint to trigger feedback summarization
 app.get("/api/summarize-feedback", async (req, res) => {
+  console.log("Feedback summarization triggered:", new Date().toISOString());
   try {
     await aggregateFeedback();
-    res
-      .status(200)
-      .json({ message: "Feedback summarization triggered successfully" });
+    console.log("Feedback summarization completed successfully");
+    res.status(200).json({ message: "Feedback summarization completed" });
   } catch (error) {
-    console.error("Error triggering feedback summarization:", error);
-    res.status(500).json({
-      message: "Error triggering feedback summarization",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
+    console.error("Feedback summarization failed:", error);
+    res.status(500).json({ error: "Summarization failed" });
   }
 });
 
@@ -65,28 +65,3 @@ app.get("/api/summarize-feedback", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-// Periodic feedback aggregation job
-import cron from "node-cron";
-import { verifyWebhookSignature } from "../src/services/webhook-verifier";
-import { saveWebhookEvent } from "../src/db";
-import { aggregateFeedback } from "../src/jobs/feedback-aggregator";
-
-// Test schedule - runs every minute
-cron.schedule(
-  "* * * * *",
-  () => {
-    console.log(`Cron job started at: ${new Date().toISOString()}`);
-    aggregateFeedback()
-      .then(() => console.log("Cron job completed successfully"))
-      .catch((err) => console.error("Cron job failed:", err));
-  },
-  {
-    timezone: "America/New_York",
-  }
-);
-
-// For immediate verification, log when the schedule is set up
-console.log(
-  `Cron job scheduled for Sundays 9 AM EST. Current server time is: ${new Date().toISOString()}`
-);

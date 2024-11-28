@@ -1,1 +1,10 @@
-{ "version": 2, "rewrites": [{ "source": "/(.*)", "destination": "/api" }] }
+{
+  "version": 2,
+  "crons": [
+    {
+      "path": "/api/summarize-feedback",
+      "schedule": "0 9 * * SUN"
+    }
+  ],
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+}
