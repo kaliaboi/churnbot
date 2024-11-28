@@ -3,7 +3,8 @@ dotenv.config();
 
 export const config = {
   database: {
-    connectionString: process.env.DATABASE_URL!,
+    connectionString: process.env.POSTGRES_URL!,
+    ssl: { rejectUnauthorized: false },
   },
   churnkey: {
     webhookSecret: process.env.CHURNKEY_WEBHOOK_SECRET!,
