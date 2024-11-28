@@ -50,6 +50,13 @@ app.post("/api/webhooks/churnkey", async (req, res) => {
 
 // Temporary endpoint to trigger feedback summarization
 app.get("/api/summarize-feedback", async (req, res) => {
+  // Verify the cron secret
+  const authHeader = req.headers.authorization;
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    console.log("Unauthorized cron job attempt");
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   console.log("Feedback summarization triggered:", new Date().toISOString());
   try {
     await aggregateFeedback();
