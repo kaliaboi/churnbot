@@ -72,13 +72,21 @@ import { verifyWebhookSignature } from "../src/services/webhook-verifier";
 import { saveWebhookEvent } from "../src/db";
 import { aggregateFeedback } from "../src/jobs/feedback-aggregator";
 
-// Run weekly on Sundays at 9 AM EST
+// Test schedule - runs every minute
 cron.schedule(
-  "0 9 * * 0",
+  "* * * * *",
   () => {
-    aggregateFeedback();
+    console.log(`Cron job started at: ${new Date().toISOString()}`);
+    aggregateFeedback()
+      .then(() => console.log("Cron job completed successfully"))
+      .catch((err) => console.error("Cron job failed:", err));
   },
   {
     timezone: "America/New_York",
   }
+);
+
+// For immediate verification, log when the schedule is set up
+console.log(
+  `Cron job scheduled for Sundays 9 AM EST. Current server time is: ${new Date().toISOString()}`
 );
