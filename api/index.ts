@@ -45,6 +45,22 @@ app.post("/api/webhooks/churnkey", async (req, res) => {
   }
 });
 
+// Temporary endpoint to trigger feedback summarization
+app.get("/api/summarize-feedback", async (req, res) => {
+  try {
+    await aggregateFeedback();
+    res
+      .status(200)
+      .json({ message: "Feedback summarization triggered successfully" });
+  } catch (error) {
+    console.error("Error triggering feedback summarization:", error);
+    res.status(500).json({
+      message: "Error triggering feedback summarization",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
