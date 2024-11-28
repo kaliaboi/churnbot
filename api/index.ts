@@ -48,7 +48,7 @@ app.post("/api/webhooks/churnkey", async (req, res) => {
   }
 });
 
-// Temporary endpoint to trigger feedback summarization
+// Temporary endpoint to trigger feedback summarization, can use this to manually run the job
 app.get("/api/summarize-feedback", async (req, res) => {
   // Verify the cron secret
   const authHeader = req.headers.authorization;
