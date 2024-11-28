@@ -3,7 +3,9 @@ import { config } from "./config";
 
 export const pool = new Pool({
   connectionString: config.database.connectionString,
-  ssl: config.database.ssl,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 export async function saveWebhookEvent(event: any) {
