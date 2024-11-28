@@ -24,6 +24,7 @@ export async function aggregateFeedback() {
 
     if (feedbackTexts && feedbackTexts.length > 0) {
       const summary = await summarizeFeedback(feedbackTexts);
+      console.log("Summary:", summary);
       const slackNotifier = new SlackNotifier();
       await slackNotifier.sendFeedbackSummary(summary);
     } else {
