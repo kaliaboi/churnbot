@@ -9,13 +9,13 @@ export async function aggregateFeedback() {
       .select("payload")
       .gte(
         "created_at",
-        new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
       )
       .eq("payload->event", "session")
       .or(
         "payload->data->feedback.neq.null,payload->data->surveyResponse.neq.null"
       )
-      .limit(50);
+      .limit(100);
 
     if (error) throw error;
 

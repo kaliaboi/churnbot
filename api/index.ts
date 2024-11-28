@@ -56,7 +56,13 @@ import { verifyWebhookSignature } from "../src/services/webhook-verifier";
 import { saveWebhookEvent } from "../src/db";
 import { aggregateFeedback } from "../src/jobs/feedback-aggregator";
 
-// Run daily at 9 AM
-cron.schedule("0 9 * * *", () => {
-  aggregateFeedback();
-});
+// Run weekly on Sundays at 9 AM EST
+cron.schedule(
+  "0 9 * * 0",
+  () => {
+    aggregateFeedback();
+  },
+  {
+    timezone: "America/New_York",
+  }
+);
