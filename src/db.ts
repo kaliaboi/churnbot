@@ -6,6 +6,7 @@ export const pool = new Pool({
 });
 
 export async function saveWebhookEvent(event: any) {
+  console.log("Saving webhook event:", event);
   const client = await pool.connect();
   try {
     const query = `
