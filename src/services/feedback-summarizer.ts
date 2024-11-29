@@ -10,17 +10,29 @@ export async function summarizeFeedback(
 
 ${feedbackItems.map((item, index) => `${index + 1}. ${item}`).join("\n")}
 
-Summary should include:
-- Key themes and patterns
-- Most frequent pain points
-- Potential actionable insights
-- Tone and sentiment of feedback
+Format your response exactly like this example, using Slack markdown:
 
-Output a structured, professional summary that can be shared with the team.`;
+*📈 Key Themes*
+1. Theme point 1
+2. Theme point 2
+
+*❗ Pain Points*
+1. Pain point 1
+2. Pain point 2
+
+*💡 Actionable Insights*
+3. Action item 1
+4. Action item 2
+
+*🎯 Overall Sentiment*
+[One or two sentences about overall sentiment]
+
+Keep it concise and use numbered points (•) for lists. Don't use markdown bold (**) or ordered lists.`;
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-turbo",
     messages: [{ role: "user", content: prompt }],
+    temperature: 0.7,
   });
 
   return response.choices[0].message.content || "No summary generated";
