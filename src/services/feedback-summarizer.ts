@@ -10,6 +10,8 @@ export async function summarizeFeedback(
 
 ${feedbackItems.map((item, index) => `${index + 1}. ${item}`).join("\n")}
 
+Ignore any feedback talking about pricing, billing, or other non-product related issues.
+
 Format your response exactly like this example, using Slack markdown:
 
 *📈 Key Themes*
@@ -27,7 +29,7 @@ Format your response exactly like this example, using Slack markdown:
 *🎯 Overall Sentiment*
 [One or two sentences about overall sentiment]
 
-Keep it concise and use numbered points (•) for lists. Don't use markdown bold (**) or ordered lists.`;
+Keep it concise and use numbered points (•) for lists. Don't use markdown bold (**) or unordered lists.`;
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-turbo",
