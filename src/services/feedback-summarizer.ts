@@ -33,6 +33,7 @@ Format your response exactly like this example, using Slack markdown:
 [One or two sentences about overall sentiment]
 
 Important:
+- Ignore any feedback talking about pricing, billing, or other non-product related issues.
 - Use numbered lists
 - For quotes, use exact customer words (don't modify them)
 - Choose quotes that best illustrate the key themes or pain points
