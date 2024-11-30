@@ -10,8 +10,6 @@ export async function summarizeFeedback(
 
 ${feedbackItems.map((item, index) => `${index + 1}. ${item}`).join("\n")}
 
-Ignore any feedback talking about pricing, billing, or other non-product related issues.
-
 Format your response exactly like this example, using Slack markdown:
 
 *📈 Key Themes*
@@ -23,13 +21,23 @@ Format your response exactly like this example, using Slack markdown:
 2. Pain point 2
 
 *💡 Actionable Insights*
-3. Action item 1
-4. Action item 2
+1. Action item 1
+2. Action item 2
+
+*💬 Notable Customer Quotes*
+• "_[exact customer quote]_" - regarding [brief context]
+• "_[exact customer quote]_" - regarding [brief context]
+(Choose 2-3 most representative or impactful quotes)
 
 *🎯 Overall Sentiment*
 [One or two sentences about overall sentiment]
 
-Keep it concise and use numbered points (•) for lists. Don't use markdown bold (**) or unordered lists.`;
+Important:
+- Use numbered lists
+- For quotes, use exact customer words (don't modify them)
+- Choose quotes that best illustrate the key themes or pain points
+- Keep quotes concise, use [...] for trimming if needed
+- Use italics (_quote_) for customer quotes`;
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-turbo",
