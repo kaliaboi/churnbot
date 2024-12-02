@@ -29,10 +29,8 @@ Format your response exactly like this example, using Slack markdown:
 • "_[exact customer quote]_" - regarding [brief context]
 (Choose 2-3 most representative or impactful quotes)
 
-*🎯 Overall Sentiment*
-[One or two sentences about overall sentiment]
-
 Important:
+- You don't need to limit yourself to 2 points for each section, pick the most relevant points.
 - Ignore any feedback talking about pricing, billing, or other non-product related issues.
 - Use numbered lists
 - For quotes, use exact customer words (don't modify them)
