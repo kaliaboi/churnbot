@@ -122,6 +122,42 @@ app.get("/api/preview-summary", async (req, res) => {
   }
 });
 
+// New cleanup endpoint
+app.delete("/api/cleanup-events", async (req, res) => {
+  // Verify the cron secret
+  const authHeader = req.headers.authorization;
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    console.log("Unauthorized cleanup attempt");
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  console.log("Event cleanup triggered:", new Date().toISOString());
+  try {
+    const oneWeekAgo = new Date(
+      Date.now() - 7 * 24 * 60 * 60 * 1000
+    ).toISOString();
+
+    const { data, error } = await supabase
+      .from("webhook_events")
+      .delete()
+      .lt("created_at", oneWeekAgo);
+
+    if (error) throw error;
+
+    console.log("Old events cleaned up successfully");
+    res.status(200).json({
+      message: "Cleanup completed successfully",
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Event cleanup failed:", error);
+    res.status(500).json({
+      error: "Cleanup failed",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

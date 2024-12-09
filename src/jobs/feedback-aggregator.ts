@@ -4,6 +4,7 @@ import { SlackNotifier } from "../services/slack-notifier";
 
 export async function aggregateFeedback() {
   try {
+    console.log("Fetching info from supabase");
     const { data: events, error } = await supabase
       .from("webhook_events")
       .select("payload")
