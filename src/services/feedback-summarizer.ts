@@ -6,37 +6,25 @@ const openai = new OpenAI({ apiKey: config.openai.apiKey });
 export async function summarizeFeedback(
   feedbackItems: string[]
 ): Promise<string> {
-  const prompt = `Analyze the following customer feedback items and provide a concise summary:
+  const prompt = `Analyze the following customer feedback items and provide a summary with only the most important quotes:
 
 ${feedbackItems.map((item, index) => `${index + 1}. ${item}`).join("\n")}
 
 Format your response exactly like this example, using Slack markdown:
 
-*📈 Key Themes*
-1. Theme point 1
-2. Theme point 2
-
-*❗ Pain Points*
-1. Pain point 1
-2. Pain point 2
-
-*💡 Actionable Insights*
-1. Action item 1
-2. Action item 2
-
-*💬 Notable Customer Quotes*
-• "_[exact customer quote]_" - regarding [brief context]
-• "_[exact customer quote]_" - regarding [brief context]
-(Choose 2-3 most representative or impactful quotes)
+*💬 Important Customer Quotes*
+1. "_[exact customer quote]_" - regarding [brief context]
+2. "_[exact customer quote]_" - regarding [brief context]
+(Continue with 10-20 most important quotes)
 
 Important:
-- You don't need to limit yourself to 2 points for each section, pick the most relevant points.
-- Ignore any feedback talking about pricing, billing, or other non-product related issues.
-- Use numbered lists
+- Select 10-20 of the most impactful and representative quotes
+- Ignore any feedback talking about pricing, billing, or other non-product related issues
 - For quotes, use exact customer words (don't modify them)
-- Choose quotes that best illustrate the key themes or pain points
 - Keep quotes concise, use [...] for trimming if needed
-- Use italics (_quote_) for customer quotes`;
+- Use italics (_quote_) for customer quotes
+- Each quote should be numbered
+- Include brief context for each quote`;
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-turbo",
