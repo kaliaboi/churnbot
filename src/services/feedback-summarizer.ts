@@ -19,7 +19,7 @@ Format your response exactly like this example, using Slack markdown:
 
 Important:
 - Select 10-20 of the most impactful and representative quotes
-- Ignore any feedback talking about pricing, billing, or other non-product related issues
+- DO NOT RETURN ANY QUOTES THAT INCLUDE: refund, billing, renewal
 - For quotes, use exact customer words (don't modify them)
 - Keep quotes concise, use [...] for trimming if needed
 - Use italics (_quote_) for customer quotes
